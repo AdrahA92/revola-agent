@@ -4,7 +4,7 @@ Mandantenfähige SaaS für die spätere Betreuung von Unternehmenskonten durch e
 
 ## Aktueller Stand
 
-Phase 1 stellt das technische Grundgerüst bereit. Phase 2 ergänzt bisher den Backend-Kern mit ASP.NET Core Identity, Cookie-Anmeldung, Organisationen, Mitgliedschaften, Rollen, CSRF-Schutz und Auditierung. Die React-Oberfläche bleibt eine technische Statusseite; Anmelde-/Mitgliederoberfläche, E-Mail-Bestätigung, Passwortwiederherstellung und MFA sind noch offen. Agenten und Social-Media-Verbindungen sind noch nicht implementiert. Der Worker führt noch keine Aufgaben aus. Dies ist noch keine produktionsreife SaaS.
+Phase 1 stellt das technische Grundgerüst bereit. Phase 2 ergänzt ASP.NET Core Identity, Cookie-Anmeldung, Organisationen, Mitgliedschaften, Rollen, CSRF-Schutz und Auditierung. Die React-Oberfläche enthält Anmeldung, Entwicklungsregistrierung, Organisationsübersicht, Einladungen, Mitgliederverwaltung und Auditansicht. E-Mail-Bestätigung, Passwortwiederherstellung, MFA und die visuelle Abnahme sind noch offen. Agenten und Social-Media-Verbindungen sind noch nicht implementiert. Der Worker führt noch keine Aufgaben aus. Dies ist noch keine produktionsreife SaaS.
 
 ## Voraussetzungen
 
@@ -38,7 +38,7 @@ npm ci
 npm run dev
 ```
 
-Die Oberfläche läuft unter `http://localhost:5173`, die API unter `http://localhost:5080`. Vite leitet `/health/*` an die API weiter. Es werden keine Social-Media- oder OpenAI-Zugangsdaten benötigt.
+Die Oberfläche läuft unter `http://localhost:5173`, die API unter `http://localhost:5080`. Vite leitet `/health/*` und `/api/*` an die API weiter. Einstieg: `/login`, Registrierung: `/register`, Arbeitsbereich: `/workspace`. Es werden keine Social-Media- oder OpenAI-Zugangsdaten benötigt. Das Development-Setup darf nicht öffentlich bereitgestellt werden.
 
 Die Statusseite macht vor dem Klick auf „Verbindung prüfen“ keine Gesundheitsabfragen. „Bereit“ bei Backend/Datenbank erscheint ausschließlich nach erfolgreicher Antwort. Es gibt keine simulierten Produktmetriken.
 

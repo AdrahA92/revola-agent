@@ -12,6 +12,8 @@ public static class TenancyEndpoints
         var group = app.MapGroup("/api").RequireAuthorization().RequireRateLimiting("tenancy");
         group.MapGet("/tenants", async (ClaimsPrincipal user, ITenancyService service, CancellationToken ct, int page = 1) =>
             Results.Ok(await service.ListAsync(IdentityEndpoints.UserId(user), page, ct)));
+        group.MapGet("/tenants/{tenantId:guid}", async (Guid tenantId, ClaimsPrincipal user, ITenancyService service, CancellationToken ct) =>
+            Results.Ok(await service.GetAsync(IdentityEndpoints.UserId(user), tenantId, ct)));
         group.MapPut("/tenants/{tenantId:guid}", async (Guid tenantId, CreateTenant request,
             ClaimsPrincipal user, ITenancyService service, CancellationToken ct) =>
             Results.Ok(await service.CreateAsync(IdentityEndpoints.UserId(user), tenantId, request.Name ?? "", ct)));

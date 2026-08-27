@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | 0 | Produkt- und Architekturgrundlage | Abgeschlossen; Phase 1 am 27.08.2026 beauftragt |
 | 1 | Projektgrundgerüst | Implementiert, Verifikation in Bearbeitung |
-| 2 | Identität und Mandantenfähigkeit | Backend-Teilschritt implementiert; UI und Produktionsflüsse offen |
+| 2 | Identität und Mandantenfähigkeit | Backend und Verwaltungs-UI implementiert; visuelle Abnahme und Produktionsflüsse offen |
 | 3 | Unternehmensprofil und Wissensbasis | Nicht begonnen |
 | 4 | Demo-Plattform und Konto-Audit | Nicht begonnen |
 | 5 | Agent Runtime | Nicht begonnen |
@@ -36,7 +36,7 @@
 - [x] Unit-, Integrations-, Architektur- und Frontendtests einrichten
 - [x] CI für Build, Tests, Lint und Secret Scan erstellen
 - [x] Logging, Health Checks und OpenTelemetry-Grundlage einrichten
-- [ ] Docker-Start, PostgreSQL-Integrationstest und CI-Lauf erfolgreich verifizieren
+- [x] PostgreSQL-Integrationstest, Docker-Builds und CI-Lauf für Backend-Stand `0d4d688` erfolgreich verifizieren
 - [ ] Browserprüfung für Desktop und Mobilformat abschließen
 
 ### P2 – Sicherer Mandantenkern
@@ -46,8 +46,9 @@
 - [x] TenantContext und Autorisierung im Backend implementieren
 - [x] HTTP-Isolationstests für vorhandene Zugriffsarten erstellen
 - [x] AuditLog-Grundlage implementieren
-- [ ] PostgreSQL-Migration und Sicherheitsprüfungen in CI erfolgreich abnehmen
-- [ ] Komponentenbibliothek auswählen und Anmelde-/Organisations-/Mitgliederoberfläche implementieren
+- [x] PostgreSQL-Migration und Sicherheitsprüfungen für Backend-Stand `0d4d688` in CI erfolgreich abnehmen
+- [x] MUI als Komponentenbasis und Anmelde-/Organisations-/Mitgliederoberfläche implementieren
+- [ ] Neue Oberfläche visuell und mit vollständigem Backend-Ablauf abnehmen
 - [ ] E-Mail-Bestätigung, Passwortwiederherstellung und MFA ergänzen
 - [ ] Sitzungsübersicht und gezielten Einzelwiderruf ergänzen
 - [ ] Produktions-Keyring, TLS und Betreiberkonfiguration prüfen
@@ -99,7 +100,7 @@
 
 1. Produktname: vorläufig `Revola Agent`
 2. Identity: ASP.NET Core Identity bestätigt (ADR 0008)
-3. UI-Komponentenbibliothek – vor dem ersten fachlichen UI-Modul
+3. UI-Komponentenbibliothek: MUI als reversible technische Wahl (ADR 0009)
 4. lokaler Objektspeicher – vor Phase 3
 5. Hostingziel für Staging und Produktion – vor Deployment
 
@@ -109,8 +110,8 @@ Siehe ADR 0007 für die bewusst begrenzten Entscheidungen des Grundgerüsts.
 
 Verifikation am 27.08.2026: .NET-Release-Build ohne Warnungen, neun nicht-containerabhängige .NET-Tests, Frontend-Lint, drei React-Tests und Vite-Produktionsbuild erfolgreich. Docker ist in der Arbeitsumgebung nicht installiert; der Browserzugriff auf die lokale Vorschau wurde blockiert. Container-, E2E- und visuelle Abnahme sowie der vollständige CI-Lauf sind daher noch offen. Phase 1 ist implementiert, aber noch nicht vollständig abgenommen.
 
-Phase 2 fortsetzen, keine Phase 3 beginnen:
+Der Product Owner hat die aufeinanderfolgende Bearbeitung aller Phasen beauftragt. Sicherheits- und externe Freigabeschranken gelten weiterhin. Aktuell Phase 2 abschließen; die visuelle Abnahme ist durch `ERR_BLOCKED_BY_CLIENT` in der lokalen Browservorschau blockiert.
 
 Verifikation des Backend-Teilschritts am 27.08.2026: Release-Build ohne Warnungen, 29 nicht-containerabhängige .NET-Tests erfolgreich. EF erkennt keine Modelldrift; ein idempotentes PostgreSQL-Migrationsskript wurde erzeugt. Die PostgreSQL-Ausführung ist ohne Docker lokal nicht geprüft, der CI-Erfolg nicht bestätigt. Die React-Dateien wurden in diesem Teilschritt nicht verändert.
 
-> Schließe die offenen Prüfungen ab und ergänze nach Wahl der UI-Komponentenbibliothek die React-Oberfläche für Anmeldung, Organisationen und Mitglieder. Implementiere und prüfe anschließend E-Mail-Verifikation, Recovery und MFA mit einem lokalen Testadapter, ohne echte Nachrichten zu versenden. Noch keine OpenAI- oder Plattformintegration.
+> Schließe die visuelle und vollständige API-UI-Abnahme ab. Implementiere und prüfe E-Mail-Verifikation, Recovery und MFA mit einem lokalen Testadapter, ohne echte Nachrichten zu versenden. Danach Phasen 3–6 in Reihenfolge bearbeiten. Phase 7 benötigt weiterhin eine konkret bestätigte Plattform und Berechtigungen; bezahlte oder externe Aktionen benötigen eigene Freigaben.

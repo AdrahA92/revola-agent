@@ -2,7 +2,7 @@
 
 ## Status
 
-Dieses Dokument beschreibt überwiegend die Zielarchitektur. Seit Phase 1 existiert das technische Grundgerüst. Phase 2 ergänzt den Backend-Kern für Identity, Organisationen, Mitgliedschaften und Auditierung (siehe ADR 0008). Die zugehörige React-Oberfläche und produktive Kontoverifikation sind noch offen; die übrigen Fachmodule sind nicht implementiert.
+Dieses Dokument beschreibt überwiegend die Zielarchitektur. Seit Phase 1 existiert das technische Grundgerüst. Phase 2 ergänzt Identity, Organisationen, Mitgliedschaften und Auditierung (ADR 0008) sowie die zugehörige React/MUI-Oberfläche (ADR 0009). Visuelle Abnahme und produktive Kontoverifikation sind noch offen; die übrigen Fachmodule sind nicht implementiert.
 
 ## Architekturform
 

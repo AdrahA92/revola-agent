@@ -13,6 +13,7 @@ public interface ITenancyService
     Task<IReadOnlyList<TenantView>> ListAsync(Guid userId, int page, CancellationToken ct);
     Task<TenantView> CreateAsync(Guid userId, Guid tenantId, string name, CancellationToken ct);
     Task<TenantContext> ResolveAsync(Guid userId, Guid tenantId, CancellationToken ct);
+    Task<TenantView> GetAsync(Guid userId, Guid tenantId, CancellationToken ct);
     Task<IReadOnlyList<MemberView>> MembersAsync(Guid userId, Guid tenantId, int page, CancellationToken ct);
     Task<MemberView> InviteAsync(Guid userId, Guid tenantId, Guid invitedUserId, TenantRole role, CancellationToken ct);
     Task<IReadOnlyList<InvitationView>> InvitationsAsync(Guid userId, int page, CancellationToken ct);

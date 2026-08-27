@@ -22,6 +22,8 @@ public class TenantIsolationTests
         var tenant = Guid.NewGuid();
         Assert.Equal(HttpStatusCode.OK, (await SendAsync(alice, HttpMethod.Put, $"/api/tenants/{tenant}", new { name = "Alice Company" })).StatusCode);
         Assert.Empty((await bob.GetFromJsonAsync<TenantView[]>("/api/tenants"))!);
+        Assert.Equal(HttpStatusCode.NotFound, (await bob.GetAsync($"/api/tenants/{tenant}")).StatusCode);
+        Assert.Equal("Alice Company", (await alice.GetFromJsonAsync<TenantView>($"/api/tenants/{tenant}"))!.Name);
         Assert.Equal(HttpStatusCode.NotFound, (await bob.GetAsync($"/api/tenants/{tenant}/members")).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await bob.GetAsync($"/api/tenants/{tenant}/audit")).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await SendAsync(bob, HttpMethod.Put, $"/api/tenants/{tenant}/members/{aliceId}/role",

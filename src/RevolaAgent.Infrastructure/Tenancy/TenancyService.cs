@@ -31,6 +31,13 @@ public sealed class TenancyService(RevolaDbContext db, UserManager<ApplicationUs
             : new TenantContext(tenantId, userId, member.Role);
     }
 
+    public async Task<TenantView> GetAsync(Guid userId, Guid tenantId, CancellationToken ct)
+    {
+        var context = await ResolveAsync(userId, tenantId, ct);
+        var name = await db.Tenants.Where(x => x.Id == tenantId).Select(x => x.Name).SingleAsync(ct);
+        return new TenantView(tenantId, name, context.Role.ToString());
+    }
+
     public async Task<TenantView> CreateAsync(Guid userId, Guid tenantId, string name, CancellationToken ct)
     {
         name = name.Trim();

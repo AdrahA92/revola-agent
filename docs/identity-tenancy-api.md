@@ -9,7 +9,7 @@
 5. `GET /api/identity/me` liefert die eigene Benutzer-ID; diese kann ein Benutzer gezielt für eine Einladung weitergeben.
 6. Organisation mit `PUT /api/tenants/{neue UUID}` und `{ "name": "Beispielunternehmen" }` anlegen. Dieselbe UUID und derselbe Inhalt können sicher erneut gesendet werden.
 
-Die UI unterstützt diese Schritte noch nicht. Der Vite-Proxy bedient derzeit ausschließlich die technische Statusseite. Für manuelle API-Tests ist direkt die API-Adresse zu verwenden; eine vollständige Browserabnahme ist noch offen.
+Die UI unterstützt Anmeldung und Entwicklungsregistrierung unter `/login` und `/register`. Unter `/workspace` können Organisationen angelegt und Einladungen angenommen werden; `/workspace/{tenantId}` enthält die berechtigungsgesteuerte Mitgliederverwaltung und Auditansicht. Der Vite-Proxy leitet `/api` an das Backend weiter. Die vollständige visuelle Browserabnahme ist noch offen.
 
 ## Endpunkte
 
@@ -21,6 +21,7 @@ Alle Pfade beginnen mit `/api`. Außer CSRF, Registrierung und Login benötigen 
 | POST `identity/logout` | alle eigenen Sitzungen widerrufen |
 | POST `identity/password` | `currentPassword`, `newPassword`; danach erneut anmelden |
 | GET `tenants?page=1` | eigene aktive Organisationen, 50 je Seite |
+| GET `tenants/{tenantId}` | Name und eigene Rolle nach Prüfung aktiver Mitgliedschaft |
 | PUT `tenants/{tenantId}` | `name`; Anlage mit Owner-Mitgliedschaft |
 | GET `tenants/{tenantId}/members?page=1` | Mitglieder und offene Einladungen; Owner/Admin |
 | PUT `tenants/{tenantId}/members/{userId}/invitation` | `role`; bestehender registrierter Benutzer, zunächst inaktiv |
@@ -39,10 +40,10 @@ Rollen sind exakt `Owner`, `Admin`, `Manager`, `Editor`, `Approver`, `Viewer`. O
 - Auditierung enthält Akteur-/Ziel-IDs, Aktion und UTC-Zeitpunkt. Keine Passwörter, E-Mails oder Request-Payloads. Tenant-Auditabfragen schließen globale Identity-Ereignisse aus.
 - Sitzungen enden spätestens nach 30 Minuten. Security Stamps werden bei jedem authentifizierten Request geprüft. Logout und Passwortänderung widerrufen alle vorhandenen Sitzungen.
 - Nach fünf falschen Passwörtern gilt eine 15-minütige Kontosperre. Identity-Schreibendpunkte erlauben 20 Requests pro Minute/IP; Mandantenendpunkte 120 Requests pro Minute/Benutzer. Zähler gelten pro Prozess.
-- In Production bleibt die Registrierung deaktiviert und Login erfordert bestätigte E-Mail. E-Mail-Verifikation, Recovery, MFA, Sitzungsübersicht, Frontend und produktive Schlüsselverwaltung sind noch nicht fertig. Nicht mit Development-Einstellungen öffentlich bereitstellen.
+- In Production bleibt die Registrierung deaktiviert und Login erfordert bestätigte E-Mail. E-Mail-Verifikation, Recovery, MFA, Sitzungsübersicht und produktive Schlüsselverwaltung sind noch nicht fertig. Nicht mit Development-Einstellungen öffentlich bereitstellen.
 
 ## Verifikation
 
-Lokale HTTP-Integrationstests verwenden SQLite, echte Identity-Cookies und echten CSRF-Schutz; die Authentifizierung wird nicht gemockt. Separat prüft ein PostgreSQL-Testcontainer frische/wiederholte Migration, Modelldrift, Readiness, Identity-Anmeldung, fremden Mandantenzugriff und SQL-Auditmanipulation. Docker ist in dieser Arbeitsumgebung nicht verfügbar; dieser Test muss in CI/Entwicklung noch erfolgreich ausgeführt werden.
+Lokale HTTP-Integrationstests verwenden SQLite, echte Identity-Cookies und echten CSRF-Schutz; die Authentifizierung wird nicht gemockt. Separat prüft ein PostgreSQL-Testcontainer frische/wiederholte Migration, Modelldrift, Readiness, Identity-Anmeldung, fremden Mandantenzugriff und SQL-Auditmanipulation. Der Backend-Stand `0d4d688` hat diese Prüfungen in [CI-Lauf 33049169674](https://github.com/AdrahA92/revola-agent/actions/runs/33049169674) bestanden. Docker bleibt lokal nicht verfügbar. Neue UI-Vertragstests verwenden ausdrücklich gemockte API-Antworten und ersetzen keine vollständige Ende-zu-Ende-Abnahme mit echter Datenbank.
 
 Siehe [ADR 0008](adr/0008-aspnet-identity.md) für Entscheidungen und Grenzen.
