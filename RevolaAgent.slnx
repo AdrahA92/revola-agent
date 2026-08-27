@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RevolaAgent.Domain/RevolaAgent.Domain.csproj" />
+    <Project Path="src/RevolaAgent.Application/RevolaAgent.Application.csproj" />
+    <Project Path="src/RevolaAgent.Infrastructure/RevolaAgent.Infrastructure.csproj" />
+    <Project Path="src/RevolaAgent.Api/RevolaAgent.Api.csproj" />
+    <Project Path="src/RevolaAgent.Worker/RevolaAgent.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RevolaAgent.UnitTests/RevolaAgent.UnitTests.csproj" />
+    <Project Path="tests/RevolaAgent.IntegrationTests/RevolaAgent.IntegrationTests.csproj" />
+    <Project Path="tests/RevolaAgent.ArchitectureTests/RevolaAgent.ArchitectureTests.csproj" />
+  </Folder>
+</Solution>

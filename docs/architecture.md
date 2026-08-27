@@ -2,7 +2,7 @@
 
 ## Status
 
-Dieses Dokument beschreibt die Zielarchitektur. In Phase 0 existiert noch kein Anwendungscode.
+Dieses Dokument beschreibt die Zielarchitektur. Seit Phase 1 existieren API, Worker, React-Statusseite und Testprojekte als technisches Grundgerüst. Die unten beschriebenen Fachmodule sind noch nicht implementiert.
 
 ## Architekturform
 

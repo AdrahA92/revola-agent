@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup><UserSecretsId>revola-agent-worker-development</UserSecretsId></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../RevolaAgent.Infrastructure/RevolaAgent.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+  </ItemGroup>
+</Project>
