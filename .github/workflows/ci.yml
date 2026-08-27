@@ -15,6 +15,9 @@ jobs:
           dotnet-version: '10.0.x'
       - run: dotnet restore RevolaAgent.slnx
       - run: dotnet build RevolaAgent.slnx --no-restore -c Release
+      - run: dotnet tool restore
+      - run: dotnet ef migrations has-pending-model-changes --project src/RevolaAgent.Infrastructure --startup-project src/RevolaAgent.Api --configuration Release --no-build
+      - run: dotnet ef migrations script --idempotent --project src/RevolaAgent.Infrastructure --startup-project src/RevolaAgent.Api --configuration Release --no-build --output /tmp/revola-migrations.sql
       - run: dotnet test RevolaAgent.slnx --no-build -c Release --logger trx
       - name: Validate Docker configuration
         env:

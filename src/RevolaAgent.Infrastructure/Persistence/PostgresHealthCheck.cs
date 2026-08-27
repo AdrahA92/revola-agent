@@ -9,6 +9,8 @@ public sealed class PostgresHealthCheck(RevolaDbContext database) : IHealthCheck
         HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         var connected = await database.Database.CanConnectAsync(cancellationToken);
-        return connected ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
+        if (!connected) return HealthCheckResult.Unhealthy();
+        var pending = await database.Database.GetPendingMigrationsAsync(cancellationToken);
+        return pending.Any() ? HealthCheckResult.Unhealthy() : HealthCheckResult.Healthy();
     }
 }

@@ -1,5 +1,9 @@
 # Sicherheits- und Datenschutzkonzept
 
+## Implementierungsstand
+
+Phase 2 enthält bisher den Identity-/Tenancy-Backend-Kern: Cookie-Anmeldung, CSRF, Lockout, Rate Limits, Rollenprüfung pro Organisation, Versionskonflikte und append-only Auditierung. Registrierungen sind nur im Development-Modus möglich. MFA, E-Mail-Bestätigung, Recovery, Sitzungsübersicht und produktive Schlüsselverwaltung sind weiterhin Ziele, keine fertiggestellten Funktionen. Die folgenden Abschnitte beschreiben teilweise den angestrebten Produktzustand. Details und Testgrenzen: [Identity-/Tenancy-API](identity-tenancy-api.md).
+
 ## Schutzgüter
 
 - Benutzerkonten und Sitzungen

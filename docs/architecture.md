@@ -2,7 +2,7 @@
 
 ## Status
 
-Dieses Dokument beschreibt die Zielarchitektur. Seit Phase 1 existieren API, Worker, React-Statusseite und Testprojekte als technisches Grundgerüst. Die unten beschriebenen Fachmodule sind noch nicht implementiert.
+Dieses Dokument beschreibt überwiegend die Zielarchitektur. Seit Phase 1 existiert das technische Grundgerüst. Phase 2 ergänzt den Backend-Kern für Identity, Organisationen, Mitgliedschaften und Auditierung (siehe ADR 0008). Die zugehörige React-Oberfläche und produktive Kontoverifikation sind noch offen; die übrigen Fachmodule sind nicht implementiert.
 
 ## Architekturform
 
@@ -116,7 +116,7 @@ Die erste Version verwendet eine PostgreSQL-Tabelle mit Leasing, Sichtbarkeitsze
 
 ## Offene Architekturentscheidungen
 
-- konkreter Identity Provider oder ASP.NET Core Identity
+- Identity ist entschieden: ASP.NET Core Identity; produktive E-Mail-Verifikation, MFA und Schlüsselverwaltung sind noch offen
 - EU-Hostinganbieter und verwaltete Dienste
 - Objektspeicher und Malwareprüfung für Uploads
 - erste produktive Plattform und deren Capability-Matrix

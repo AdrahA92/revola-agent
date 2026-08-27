@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | 0 | Produkt- und Architekturgrundlage | Abgeschlossen; Phase 1 am 27.08.2026 beauftragt |
 | 1 | Projektgrundgerüst | Implementiert, Verifikation in Bearbeitung |
-| 2 | Identität und Mandantenfähigkeit | Nicht begonnen |
+| 2 | Identität und Mandantenfähigkeit | Backend-Teilschritt implementiert; UI und Produktionsflüsse offen |
 | 3 | Unternehmensprofil und Wissensbasis | Nicht begonnen |
 | 4 | Demo-Plattform und Konto-Audit | Nicht begonnen |
 | 5 | Agent Runtime | Nicht begonnen |
@@ -41,11 +41,16 @@
 
 ### P2 – Sicherer Mandantenkern
 
-- [ ] Identity-Entscheidung bestätigen
-- [ ] Organisation, Mitgliedschaft und Rollen implementieren
-- [ ] TenantContext und Autorisierung implementieren
-- [ ] Isolationstests für alle Zugriffsarten erstellen
-- [ ] AuditLog-Grundlage implementieren
+- [x] ASP.NET Core Identity vom Product Owner bestätigt
+- [x] Organisation, Mitgliedschaft und Rollen im Backend implementieren
+- [x] TenantContext und Autorisierung im Backend implementieren
+- [x] HTTP-Isolationstests für vorhandene Zugriffsarten erstellen
+- [x] AuditLog-Grundlage implementieren
+- [ ] PostgreSQL-Migration und Sicherheitsprüfungen in CI erfolgreich abnehmen
+- [ ] Komponentenbibliothek auswählen und Anmelde-/Organisations-/Mitgliederoberfläche implementieren
+- [ ] E-Mail-Bestätigung, Passwortwiederherstellung und MFA ergänzen
+- [ ] Sitzungsübersicht und gezielten Einzelwiderruf ergänzen
+- [ ] Produktions-Keyring, TLS und Betreiberkonfiguration prüfen
 
 ### P3 – Unternehmenswissen
 
@@ -93,7 +98,7 @@
 ## Zur zuständigen Phase zurückgestellte Entscheidungen
 
 1. Produktname: vorläufig `Revola Agent`
-2. Identity: ASP.NET Core Identity im eigenen Backend oder externer Provider – vor Phase 2
+2. Identity: ASP.NET Core Identity bestätigt (ADR 0008)
 3. UI-Komponentenbibliothek – vor dem ersten fachlichen UI-Modul
 4. lokaler Objektspeicher – vor Phase 3
 5. Hostingziel für Staging und Produktion – vor Deployment
@@ -104,6 +109,8 @@ Siehe ADR 0007 für die bewusst begrenzten Entscheidungen des Grundgerüsts.
 
 Verifikation am 27.08.2026: .NET-Release-Build ohne Warnungen, neun nicht-containerabhängige .NET-Tests, Frontend-Lint, drei React-Tests und Vite-Produktionsbuild erfolgreich. Docker ist in der Arbeitsumgebung nicht installiert; der Browserzugriff auf die lokale Vorschau wurde blockiert. Container-, E2E- und visuelle Abnahme sowie der vollständige CI-Lauf sind daher noch offen. Phase 1 ist implementiert, aber noch nicht vollständig abgenommen.
 
-Nach vollständiger Verifikation von Phase 1 und Bestätigung der Identity-Entscheidung:
+Phase 2 fortsetzen, keine Phase 3 beginnen:
 
-> Setze ausschließlich Phase 2 gemäß AGENTS.md um: Identität, Organisationen, Mitgliedschaften, Rollen, TenantContext, Autorisierung und Isolationstests. Implementiere noch keine OpenAI- oder Plattformintegration.
+Verifikation des Backend-Teilschritts am 27.08.2026: Release-Build ohne Warnungen, 29 nicht-containerabhängige .NET-Tests erfolgreich. EF erkennt keine Modelldrift; ein idempotentes PostgreSQL-Migrationsskript wurde erzeugt. Die PostgreSQL-Ausführung ist ohne Docker lokal nicht geprüft, der CI-Erfolg nicht bestätigt. Die React-Dateien wurden in diesem Teilschritt nicht verändert.
+
+> Schließe die offenen Prüfungen ab und ergänze nach Wahl der UI-Komponentenbibliothek die React-Oberfläche für Anmeldung, Organisationen und Mitglieder. Implementiere und prüfe anschließend E-Mail-Verifikation, Recovery und MFA mit einem lokalen Testadapter, ohne echte Nachrichten zu versenden. Noch keine OpenAI- oder Plattformintegration.

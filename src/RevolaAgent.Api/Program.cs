@@ -1,9 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using RevolaAgent.Infrastructure;
+using RevolaAgent.Api.Identity;
+using RevolaAgent.Api.Tenancy;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddFoundation("RevolaAgent.Api");
+builder.AddIdentityFoundation();
+builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 64 * 1024);
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
     context.ProblemDetails.Extensions["traceId"] = Activity.Current?.TraceId.ToString());
 builder.Services.AddOpenApi();
@@ -20,6 +24,13 @@ app.Use(async (context, next) =>
     await next(context);
 });
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
+app.UseRouting();
+app.UseAuthentication();
+app.UseRateLimiter();
+app.UseAuthorization();
+app.Use(SecurityMiddleware.Invoke);
+app.MapIdentityFoundation();
+app.MapTenancy();
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false,

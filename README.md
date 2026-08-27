@@ -4,7 +4,7 @@ Mandantenfähige SaaS für die spätere Betreuung von Unternehmenskonten durch e
 
 ## Aktueller Stand
 
-Phase 1 stellt das technische Grundgerüst bereit: ASP.NET-Core-API, Worker-Host, React/Vite-Statusseite, PostgreSQL-Konfiguration, Tests und CI. Anmeldung, Mandantendaten, Agenten und Social-Media-Verbindungen sind noch nicht implementiert. Der Worker führt noch keine Aufgaben aus.
+Phase 1 stellt das technische Grundgerüst bereit. Phase 2 ergänzt bisher den Backend-Kern mit ASP.NET Core Identity, Cookie-Anmeldung, Organisationen, Mitgliedschaften, Rollen, CSRF-Schutz und Auditierung. Die React-Oberfläche bleibt eine technische Statusseite; Anmelde-/Mitgliederoberfläche, E-Mail-Bestätigung, Passwortwiederherstellung und MFA sind noch offen. Agenten und Social-Media-Verbindungen sind noch nicht implementiert. Der Worker führt noch keine Aufgaben aus. Dies ist noch keine produktionsreife SaaS.
 
 ## Voraussetzungen
 
@@ -21,7 +21,16 @@ Phase 1 stellt das technische Grundgerüst bereit: ASP.NET-Core-API, Worker-Host
 docker compose up --build -d
 ```
 
-3. Starte in einem zweiten Terminal die Oberfläche:
+3. Wende die Migration ausdrücklich an. Setze vorher `ConnectionStrings__Database` für den lokalen PostgreSQL-Port 5432 mit den Werten aus deiner lokalen Konfiguration (nicht ins Repository schreiben):
+
+```sh
+dotnet tool restore
+dotnet ef database update --project src/RevolaAgent.Infrastructure --startup-project src/RevolaAgent.Api
+```
+
+Ohne Migration bleibt `/health/ready` bei HTTP 503. API und Worker führen niemals automatisch Migrationen aus. Die Design-Time-Factory liest `ConnectionStrings__Database`; API-User-Secrets werden von dieser Factory nicht übernommen. Vor Migration produktiver Daten sind Backup, SQL-Review und ein getrennt berechtigter Migrationsbenutzer erforderlich.
+
+4. Starte in einem zweiten Terminal die Oberfläche:
 
 ```sh
 cd web/revola-agent-web
@@ -66,15 +75,17 @@ Die Playwright-Tests prüfen Desktop und Mobilformat mit ausdrücklich gemockten
 ## Infrastruktur und Sicherheit
 
 - `/health/live` prüft die Erreichbarkeit des Prozesses, unabhängig von PostgreSQL.
-- `/health/ready` prüft die tatsächliche PostgreSQL-Verbindung und liefert bei Fehlern HTTP 503.
+- `/health/ready` prüft die tatsächliche PostgreSQL-Verbindung und ausstehende Migrationen; bei Fehlern oder fehlenden Migrationen liefert es HTTP 503.
 - Health-Antworten enthalten nur den aggregierten Status, keine Servernamen, Exceptions oder Secrets.
 - Strukturierte JSON-Logs und OpenTelemetry-Traces/Metriken sind vorbereitet.
 - OTLP-Export ist standardmäßig aus; er wird nur durch `OTEL_EXPORTER_OTLP_ENDPOINT` aktiviert. Vor produktiver Nutzung sind Datenminimierung und Collector-Zugriff zu prüfen.
-- Noch keine Fachschema-Migrationen: Phase 1 enthält einen leeren DbContext. Schema und Migrations-Gate folgen mit Phase 2. Die Anwendung migriert nie automatisch beim Start.
+- Die erste Migration enthält Identity, Organisationen, Mitgliedschaften und Audit-Ereignisse. Die CI prüft Modelldrift und Migrationen auf einer frischen PostgreSQL-Datenbank. Die Anwendung migriert nie automatisch beim Start.
 - Die Compose-Konfiguration ist ausschließlich für lokale Entwicklung. Vor Produktion sind TLS, Hosts, Secret Store und Telemetrie-Konfiguration festzulegen.
 - Docker-Hosts laufen mit dem nicht privilegierten .NET-App-Benutzer.
 
 ## Projektunterlagen
+
+- [Phase-2-API und Grenzen](docs/identity-tenancy-api.md)
 
 - [Produktumfang](docs/product-scope.md)
 - [Architektur](docs/architecture.md)
