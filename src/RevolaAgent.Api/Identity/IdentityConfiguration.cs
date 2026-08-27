@@ -5,6 +5,7 @@ using RevolaAgent.Application.Tenancy;
 using RevolaAgent.Infrastructure.Identity;
 using RevolaAgent.Infrastructure.Persistence;
 using RevolaAgent.Infrastructure.Tenancy;
+using Microsoft.EntityFrameworkCore;
 
 namespace RevolaAgent.Api.Identity;
 
@@ -18,7 +19,7 @@ public static class IdentityConfiguration
             options.Password.RequiredLength = 12;
             options.Lockout.MaxFailedAccessAttempts = 5;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-            options.SignIn.RequireConfirmedEmail = !builder.Environment.IsDevelopment();
+            options.SignIn.RequireConfirmedEmail = true;
         }).AddEntityFrameworkStores<RevolaDbContext>().AddDefaultTokenProviders();
         builder.Services.ConfigureApplicationCookie(options =>
         {
@@ -39,12 +40,24 @@ public static class IdentityConfiguration
                     return;
                 }
                 await SecurityStampValidator.ValidatePrincipalAsync(context);
+                if (context.Principal?.Identity?.IsAuthenticated != true) return;
+                if (!context.Properties.Items.TryGetValue("revola.session", out var sessionText) || !Guid.TryParse(sessionText, out var sessionId))
+                {
+                    context.RejectPrincipal();
+                    return;
+                }
+                var userId = IdentityEndpoints.UserId(context.Principal);
+                var db = context.HttpContext.RequestServices.GetRequiredService<RevolaDbContext>();
+                if (!await db.LoginSessions.AnyAsync(x => x.Id == sessionId && x.UserId == userId && x.RevokedAt == null && x.ExpiresAt > DateTime.UtcNow,
+                    context.HttpContext.RequestAborted)) context.RejectPrincipal();
             };
             options.Events.OnRedirectToLogin = context => { context.Response.StatusCode = 401; return Task.CompletedTask; };
             options.Events.OnRedirectToAccessDenied = context => { context.Response.StatusCode = 403; return Task.CompletedTask; };
         });
         // Revocation applies on the very next authenticated request, not after a cached interval.
         builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.Zero);
+        builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromHours(1));
+        builder.Services.AddScoped<IIdentityDelivery, LocalIdentityDelivery>();
         builder.Services.AddAuthorization();
         builder.Services.AddAntiforgery(options =>
         {

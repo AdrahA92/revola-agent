@@ -4,6 +4,8 @@ import { StatusPage } from './features/status/StatusPage';
 import { SessionGate } from './features/auth/SessionGate';
 
 const AuthPage = lazy(() => import('./features/auth/AuthPage').then(module => ({ default: module.AuthPage })));
+const RecoveryPage = lazy(() => import('./features/auth/RecoveryPage').then(module => ({ default: module.RecoveryPage })));
+const SecurityPage = lazy(() => import('./features/auth/SecurityPage').then(module => ({ default: module.SecurityPage })));
 const WorkspacePage = lazy(() => import('./features/tenancy/WorkspacePage').then(module => ({ default: module.WorkspacePage })));
 const MembersPage = lazy(() => import('./features/tenancy/MembersPage').then(module => ({ default: module.MembersPage })));
 
@@ -22,6 +24,11 @@ export function App() {
       <Route path="/" element={<StatusPage />} />
       <Route path="/login" element={<AuthPage key="login" />} />
       <Route path="/register" element={<AuthPage key="register" registerAccount />} />
+      <Route path="/confirm" element={<RecoveryPage key="confirm" mode="confirm" />} />
+      <Route path="/resend" element={<RecoveryPage key="resend" mode="resend" />} />
+      <Route path="/forgot" element={<RecoveryPage key="forgot" mode="forgot" />} />
+      <Route path="/reset" element={<RecoveryPage key="reset" mode="reset" />} />
+      <Route path="/security" element={<SecurityPage />} />
       <Route path="/workspace" element={<SessionGate>{id => <WorkspacePage key={id} userId={id} />}</SessionGate>} />
       <Route path="/workspace/:tenantId" element={<SessionGate>{id => <MembersPage key={`${id}:${location.pathname}`} userId={id} />}</SessionGate>} />
       <Route path="*" element={<><h1>Seite nicht gefunden</h1><Link to="/">Zum Systemstatus</Link></>} />

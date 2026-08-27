@@ -1,7 +1,7 @@
 # ADR 0009: React-Verwaltungsoberfläche und aufeinanderfolgende Phasen
 
 - Datum: 2026-08-27
-- Status: Implementiert, visuelle Abnahme blockiert
+- Status: Implementiert, visuelle Abnahme mit Zustimmung des Nutzers zurückgestellt
 
 Der Product Owner beauftragt alle Phasen in Reihenfolge. Damit entfällt die erneute Beauftragung jedes Meilensteins, nicht aber dessen Qualitätsprüfung oder die erforderliche Freigabe externer Plattformen, Kosten und Berechtigungen.
 

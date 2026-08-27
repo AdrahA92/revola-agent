@@ -1,5 +1,8 @@
 name: revola-agent
 services:
+  mailpit:
+    image: axllent/mailpit:v1.27.4
+    ports: ["127.0.0.1:8025:8025", "127.0.0.1:1025:1025"]
   postgres:
     image: postgres:17-alpine
     environment:
@@ -21,10 +24,12 @@ services:
     environment:
       ASPNETCORE_HTTP_PORTS: 8080
       ASPNETCORE_ENVIRONMENT: Development
+      Identity__MailpitHost: mailpit
       ConnectionStrings__Database: Host=postgres;Database=${POSTGRES_DB:-revola_agent};Username=${POSTGRES_USER:-revola};Password=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
     ports: ["127.0.0.1:5080:8080"]
     depends_on:
       postgres: {condition: service_healthy}
+      mailpit: {condition: service_started}
   worker:
     build:
       context: .

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RevolaAgent.Infrastructure.Persistence;
 using Xunit;
+using RevolaAgent.Infrastructure.Identity;
 
 namespace RevolaAgent.IntegrationTests;
 
@@ -19,6 +20,7 @@ public sealed class IdentityTestFactory : WebApplicationFactory<Program>
     private readonly SqliteConnection connection = new("Data Source=:memory:");
     private readonly string? postgresConnection;
     private readonly string environment;
+    public RecordingIdentityDelivery Delivery { get; } = new();
 
     public IdentityTestFactory(string? postgresConnection = null, string environment = "Development")
     {
@@ -33,6 +35,8 @@ public sealed class IdentityTestFactory : WebApplicationFactory<Program>
         builder.UseSetting("ConnectionStrings:Database", "Host=localhost;Database=unused");
         builder.ConfigureServices(services =>
         {
+            services.RemoveAll<IIdentityDelivery>();
+            services.AddSingleton<IIdentityDelivery>(Delivery);
             services.RemoveAll<DbContextOptions<RevolaDbContext>>();
             services.RemoveAll<IDbContextOptionsConfiguration<RevolaDbContext>>();
             services.AddDbContext<RevolaDbContext>(options =>
@@ -59,6 +63,9 @@ public sealed class IdentityTestFactory : WebApplicationFactory<Program>
         var client = NewClient();
         var response = await SendAsync(client, HttpMethod.Post, "/api/identity/register", new { email, password = Password });
         Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+        var message = Delivery.Messages.Last(x => x.Email == email && x.Purpose == "confirm");
+        response = await SendAsync(client, HttpMethod.Post, "/api/identity/confirm-email", new { message.UserId, message.Token });
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         response = await SendAsync(client, HttpMethod.Post, "/api/identity/login", new { email, password = Password });
         Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         var me = await client.GetFromJsonAsync<JsonElement>("/api/identity/me");
@@ -78,5 +85,15 @@ public sealed class IdentityTestFactory : WebApplicationFactory<Program>
     {
         await base.DisposeAsync();
         await connection.DisposeAsync();
+    }
+}
+
+public sealed class RecordingIdentityDelivery : IIdentityDelivery
+{
+    public System.Collections.Concurrent.ConcurrentQueue<IdentityMessage> Messages { get; } = new();
+    public Task SendAsync(IdentityMessage message, CancellationToken ct)
+    {
+        Messages.Enqueue(message);
+        return Task.CompletedTask;
     }
 }

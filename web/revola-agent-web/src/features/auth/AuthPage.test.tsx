@@ -49,3 +49,21 @@ test('registration never claims success when backend is unavailable', async () =
   expect(screen.queryByText('Konto erstellt')).not.toBeInTheDocument();
   await waitFor(() => expect(screen.getByRole('button', { name: 'Konto erstellen' })).toBeEnabled());
 });
+
+test('MFA challenge does not authenticate and sends the supplied second factor', async () => {
+  const fetchMock = vi.spyOn(globalThis, 'fetch')
+    .mockResolvedValueOnce(new Response(JSON.stringify({ token: 'csrf' })))
+    .mockResolvedValueOnce(new Response(JSON.stringify({ requiresMfa: true }), { status: 202 }))
+    .mockResolvedValueOnce(new Response(JSON.stringify({ token: 'csrf' })))
+    .mockResolvedValueOnce(new Response(null, { status: 204 }));
+  setup();
+  fireEvent.change(screen.getByLabelText('E-Mail-Adresse'), { target: { value: 'example@example.test' } });
+  fireEvent.change(screen.getByLabelText('Passwort'), { target: { value: 'Only-Test-Password-42!' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
+  const code = await screen.findByLabelText('Authenticator-Code');
+  expect(screen.queryByText('Workspace loaded')).not.toBeInTheDocument();
+  fireEvent.change(code, { target: { value: '123456' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
+  expect(await screen.findByText('Workspace loaded')).toBeVisible();
+  expect(JSON.parse(fetchMock.mock.calls[3][1]!.body as string).code).toBe('123456');
+});

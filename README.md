@@ -4,7 +4,13 @@ Mandantenfähige SaaS für die spätere Betreuung von Unternehmenskonten durch e
 
 ## Aktueller Stand
 
-Phase 1 stellt das technische Grundgerüst bereit. Phase 2 ergänzt ASP.NET Core Identity, Cookie-Anmeldung, Organisationen, Mitgliedschaften, Rollen, CSRF-Schutz und Auditierung. Die React-Oberfläche enthält Anmeldung, Entwicklungsregistrierung, Organisationsübersicht, Einladungen, Mitgliederverwaltung und Auditansicht. E-Mail-Bestätigung, Passwortwiederherstellung, MFA und die visuelle Abnahme sind noch offen. Agenten und Social-Media-Verbindungen sind noch nicht implementiert. Der Worker führt noch keine Aufgaben aus. Dies ist noch keine produktionsreife SaaS.
+Phase 1 stellt das technische Grundgerüst bereit. Phase 2 ergänzt ASP.NET Core Identity, Cookie-Anmeldung, Organisationen, Mitgliedschaften, Rollen, CSRF-Schutz und Auditierung. Die React-Oberfläche enthält Anmeldung, Entwicklungsregistrierung, Organisationsübersicht, Einladungen, Mitgliederverwaltung und Auditansicht. E-Mail-Bestätigung, Passwortwiederherstellung, optionale TOTP-MFA und Sitzungswiderruf sind implementiert; E-Mails gehen ausschließlich an den lokalen Test-Posteingang. Die visuelle Abnahme ist mit Zustimmung des Nutzers zurückgestellt. Agenten und Social-Media-Verbindungen sind noch nicht implementiert. Der Worker führt noch keine Aufgaben aus. Dies ist noch keine produktionsreife SaaS.
+
+### Lokale Kontosicherheit
+
+Docker Compose startet Mailpit unter `http://localhost:8025` (SMTP auf localhost:1025). Registrierung erfordert den laufenden Test-Posteingang; es werden keine externen E-Mails versendet. Nach der Registrierung Benutzer-ID und Code aus Mailpit unter `/confirm` eingeben. Bestehende, noch unbestätigte Entwicklungskonten können unter `/resend` eine Bestätigung anfordern. `/forgot` und `/reset` ermöglichen das Zurücksetzen des Passworts. Codes sind eine Stunde gültig. Nach der neuen Migration ist eine erneute Anmeldung notwendig, da alte Cookies keine persistierte Sitzungs-ID besitzen.
+
+Unter `/security` lassen sich eine Authenticator-App manuell einrichten und einzelne Sitzungen beenden. MFA-Aktivierung zeigt zehn einmalige Wiederherstellungscodes und beendet alle Sitzungen. Codes sicher aufbewahren; die Anzeige ist absichtlich flüchtig. Passwortänderungen und -zurücksetzungen beenden ebenfalls alle Sitzungen. Produktivregistrierung und produktiver E-Mail-Versand bleiben gesperrt; persistente verschlüsselte Data-Protection-Schlüssel und ein freigegebener Versanddienst sind noch erforderlich.
 
 ## Voraussetzungen
 

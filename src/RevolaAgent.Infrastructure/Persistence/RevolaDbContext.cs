@@ -13,11 +13,18 @@ public sealed class RevolaDbContext(DbContextOptions<RevolaDbContext> options)
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<Membership> Memberships => Set<Membership>();
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
+    public DbSet<LoginSession> LoginSessions => Set<LoginSession>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.Entity<ApplicationUser>().HasIndex(x => x.NormalizedEmail).IsUnique();
+        builder.Entity<ApplicationUser>().Property(x => x.LastTwoFactorCodeHash).HasMaxLength(64);
+        builder.Entity<LoginSession>(entity =>
+        {
+            entity.HasIndex(x => new { x.UserId, x.ExpiresAt });
+            entity.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
         builder.Entity<Tenant>(entity =>
         {
             entity.Property(x => x.Name).HasMaxLength(160);

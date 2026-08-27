@@ -49,6 +49,7 @@ export function WorkspacePage({ userId }: { userId: string }) {
   return <section className="workspace-page">
     <div className="section-heading"><h1>Ihre Organisationen</h1><Button onClick={() => void logout()} disabled={busy}>Alle Sitzungen abmelden</Button></div>
     <p className="account-id">Ihre Benutzer-ID für Einladungen: <code>{userId}</code></p>
+    <p><Link to="/security">Kontosicherheit und Sitzungen</Link></p>
     {error ? <Alert severity="error">{error}</Alert> : null}
     {tenants.isPending ? <p role="status">Organisationen werden geladen …</p> : tenants.isError ? <Alert severity="error">{errorMessage(tenants.error)} <Button onClick={() => void tenants.refetch()}>Erneut versuchen</Button></Alert> :
       <><ul className="resource-list">{tenants.data.length === 0 ? <li>Noch keine Organisation vorhanden.</li> : tenants.data.map(tenant => <li key={tenant.id}>

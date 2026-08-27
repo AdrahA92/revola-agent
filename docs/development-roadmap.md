@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | 0 | Produkt- und Architekturgrundlage | Abgeschlossen; Phase 1 am 27.08.2026 beauftragt |
 | 1 | Projektgrundgerüst | Implementiert, Verifikation in Bearbeitung |
-| 2 | Identität und Mandantenfähigkeit | Backend und Verwaltungs-UI implementiert; visuelle Abnahme und Produktionsflüsse offen |
+| 2 | Identität und Mandantenfähigkeit | Backend, Verwaltungs-UI und lokale Kontosicherheit implementiert; visuelle Abnahme zurückgestellt, Produktionshärtung offen |
 | 3 | Unternehmensprofil und Wissensbasis | Nicht begonnen |
 | 4 | Demo-Plattform und Konto-Audit | Nicht begonnen |
 | 5 | Agent Runtime | Nicht begonnen |
@@ -49,7 +49,7 @@
 - [x] PostgreSQL-Migration und Sicherheitsprüfungen für Backend-Stand `0d4d688` in CI erfolgreich abnehmen
 - [x] MUI als Komponentenbasis und Anmelde-/Organisations-/Mitgliederoberfläche implementieren
 - [ ] Neue Oberfläche visuell und mit vollständigem Backend-Ablauf abnehmen
-- [ ] E-Mail-Bestätigung, Passwortwiederherstellung und MFA ergänzen
+- [x] E-Mail-Bestätigung, Passwortwiederherstellung und optionale MFA mit lokalem Testversand ergänzen
 - [ ] Sitzungsübersicht und gezielten Einzelwiderruf ergänzen
 - [ ] Produktions-Keyring, TLS und Betreiberkonfiguration prüfen
 
@@ -110,8 +110,8 @@ Siehe ADR 0007 für die bewusst begrenzten Entscheidungen des Grundgerüsts.
 
 Verifikation am 27.08.2026: .NET-Release-Build ohne Warnungen, neun nicht-containerabhängige .NET-Tests, Frontend-Lint, drei React-Tests und Vite-Produktionsbuild erfolgreich. Docker ist in der Arbeitsumgebung nicht installiert; der Browserzugriff auf die lokale Vorschau wurde blockiert. Container-, E2E- und visuelle Abnahme sowie der vollständige CI-Lauf sind daher noch offen. Phase 1 ist implementiert, aber noch nicht vollständig abgenommen.
 
-Der Product Owner hat die aufeinanderfolgende Bearbeitung aller Phasen beauftragt. Sicherheits- und externe Freigabeschranken gelten weiterhin. Aktuell Phase 2 abschließen; die visuelle Abnahme ist durch `ERR_BLOCKED_BY_CLIENT` in der lokalen Browservorschau blockiert.
+Der Product Owner hat die aufeinanderfolgende Bearbeitung aller Phasen beauftragt und ausdrücklich zugestimmt, die durch `ERR_BLOCKED_BY_CLIENT` blockierte visuelle Abnahme zurückzustellen. Sicherheits- und externe Freigabeschranken gelten weiterhin. Lokale Kontosicherheit ergänzt: Bestätigung, Recovery, TOTP und individuelle Sitzungswiderrufe. 33 lokale .NET-Tests und 13 React-Tests erfolgreich; Release- und Frontend-Build sowie Lint erfolgreich. PostgreSQL-Migration und vollständige CI des neuen Zwischenstands sind separat zu prüfen.
 
 Verifikation des Backend-Teilschritts am 27.08.2026: Release-Build ohne Warnungen, 29 nicht-containerabhängige .NET-Tests erfolgreich. EF erkennt keine Modelldrift; ein idempotentes PostgreSQL-Migrationsskript wurde erzeugt. Die PostgreSQL-Ausführung ist ohne Docker lokal nicht geprüft, der CI-Erfolg nicht bestätigt. Die React-Dateien wurden in diesem Teilschritt nicht verändert.
 
-> Schließe die visuelle und vollständige API-UI-Abnahme ab. Implementiere und prüfe E-Mail-Verifikation, Recovery und MFA mit einem lokalen Testadapter, ohne echte Nachrichten zu versenden. Danach Phasen 3–6 in Reihenfolge bearbeiten. Phase 7 benötigt weiterhin eine konkret bestätigte Plattform und Berechtigungen; bezahlte oder externe Aktionen benötigen eigene Freigaben.
+> Prüfe die neue Kontosicherheitsmigration in CI. Danach Phasen 3–6 in Reihenfolge bearbeiten. Die visuelle Abnahme bleibt zurückgestellt. Phase 7 benötigt weiterhin eine konkret bestätigte Plattform und Berechtigungen; bezahlte oder externe Aktionen benötigen eigene Freigaben.

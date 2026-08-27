@@ -5,7 +5,7 @@
 1. PostgreSQL starten und die Migration ausdrücklich anwenden (README).
 2. `GET /api/identity/csrf` aufrufen. Das Cookie speichern und den JSON-Wert `token` bei jedem schreibenden Request als `X-CSRF-TOKEN` senden.
 3. In Development mit `POST /api/identity/register` und `{ "email": "user@example.test", "password": "<eigenes Passwort>" }` registrieren. Passwort: 12–128 Zeichen, Groß-/Kleinbuchstaben, Zahl und Sonderzeichen.
-4. Mit denselben Feldern an `POST /api/identity/login` anmelden. Cookies bei Folgeaufrufen mitsenden. Nach jedem Identitätswechsel einen neuen CSRF-Token abholen. Keine Tokens in LocalStorage speichern.
+4. Mailpit starten, den Bestätigungscode aus dem lokalen Posteingang mit `POST /api/identity/confirm-email` (`userId`, `token`) einlösen. Danach mit denselben Zugangsdaten an `POST /api/identity/login` anmelden. Bei HTTP 202 mit `requiresMfa: true` entsteht noch keine Sitzung: Zugangsdaten erneut mit `code` oder `recoveryCode` senden. Cookies bei Folgeaufrufen mitsenden. Nach jedem Identitätswechsel einen neuen CSRF-Token abholen. Keine Tokens in LocalStorage speichern.
 5. `GET /api/identity/me` liefert die eigene Benutzer-ID; diese kann ein Benutzer gezielt für eine Einladung weitergeben.
 6. Organisation mit `PUT /api/tenants/{neue UUID}` und `{ "name": "Beispielunternehmen" }` anlegen. Dieselbe UUID und derselbe Inhalt können sicher erneut gesendet werden.
 
@@ -13,11 +13,21 @@ Die UI unterstützt Anmeldung und Entwicklungsregistrierung unter `/login` und `
 
 ## Endpunkte
 
-Alle Pfade beginnen mit `/api`. Außer CSRF, Registrierung und Login benötigen alle Endpunkte eine gültige Sitzung. Alle mutierenden Requests benötigen CSRF, auch Login und Registrierung.
+Alle Pfade beginnen mit `/api`. CSRF, Registrierung, Login, Bestätigung und Passwort-Recovery sind ohne Sitzung erreichbar. Alle übrigen Endpunkte benötigen eine gültige Sitzung. Alle mutierenden Requests benötigen CSRF, auch Login und Registrierung.
 
 | Methode / Pfad | Inhalt / Wirkung |
 | --- | --- |
 | GET `identity/me` | eigene Benutzer-ID |
+| POST `identity/request-confirmation` | `email`; generisches 202, nur lokaler Testversand |
+| POST `identity/confirm-email` | `userId`, `token`; E-Mail bestätigen |
+| POST `identity/request-reset` | `email`; generisches 202, nur lokaler Testversand |
+| POST `identity/reset-password` | `userId`, `token`, `newPassword`; einmalig, beendet Sitzungen |
+| GET `identity/sessions?page=1` | eigene aktive Sitzungen, 50 je Seite |
+| DELETE `identity/sessions/{id}` | eigene Sitzung widerrufen |
+| GET `identity/mfa/status` | Aktivierungsstatus und verbleibende Recovery-Codes |
+| POST `identity/mfa/setup` | `password`; manueller Authenticator-Schlüssel, nur solange MFA nicht aktiv |
+| POST `identity/mfa/enable` | `password`, `code`; zehn einmalig ausgegebene Recovery-Codes, beendet Sitzungen |
+| POST `identity/mfa/disable` | `password` und `code` oder `recoveryCode`; beendet Sitzungen |
 | POST `identity/logout` | alle eigenen Sitzungen widerrufen |
 | POST `identity/password` | `currentPassword`, `newPassword`; danach erneut anmelden |
 | GET `tenants?page=1` | eigene aktive Organisationen, 50 je Seite |
@@ -40,7 +50,7 @@ Rollen sind exakt `Owner`, `Admin`, `Manager`, `Editor`, `Approver`, `Viewer`. O
 - Auditierung enthält Akteur-/Ziel-IDs, Aktion und UTC-Zeitpunkt. Keine Passwörter, E-Mails oder Request-Payloads. Tenant-Auditabfragen schließen globale Identity-Ereignisse aus.
 - Sitzungen enden spätestens nach 30 Minuten. Security Stamps werden bei jedem authentifizierten Request geprüft. Logout und Passwortänderung widerrufen alle vorhandenen Sitzungen.
 - Nach fünf falschen Passwörtern gilt eine 15-minütige Kontosperre. Identity-Schreibendpunkte erlauben 20 Requests pro Minute/IP; Mandantenendpunkte 120 Requests pro Minute/Benutzer. Zähler gelten pro Prozess.
-- In Production bleibt die Registrierung deaktiviert und Login erfordert bestätigte E-Mail. E-Mail-Verifikation, Recovery, MFA, Sitzungsübersicht und produktive Schlüsselverwaltung sind noch nicht fertig. Nicht mit Development-Einstellungen öffentlich bereitstellen.
+- Login erfordert in jeder Umgebung eine bestätigte E-Mail. In Production bleiben Registrierung und Zustellung deaktiviert. Bestätigung, Recovery, optionale MFA und Sitzungsübersicht sind implementiert; produktive Schlüssel-/Secret-Verschlüsselung, Zustellintegration und MFA-Pflicht stehen aus. Nicht mit Development-Einstellungen öffentlich bereitstellen.
 
 ## Verifikation
 

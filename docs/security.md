@@ -2,7 +2,7 @@
 
 ## Implementierungsstand
 
-Phase 2 enthält bisher den Identity-/Tenancy-Backend-Kern: Cookie-Anmeldung, CSRF, Lockout, Rate Limits, Rollenprüfung pro Organisation, Versionskonflikte und append-only Auditierung. Registrierungen sind nur im Development-Modus möglich. MFA, E-Mail-Bestätigung, Recovery, Sitzungsübersicht und produktive Schlüsselverwaltung sind weiterhin Ziele, keine fertiggestellten Funktionen. Die folgenden Abschnitte beschreiben teilweise den angestrebten Produktzustand. Details und Testgrenzen: [Identity-/Tenancy-API](identity-tenancy-api.md).
+Phase 2 enthält Cookie-Anmeldung, CSRF, Lockout, Rate Limits, Rollenprüfung pro Organisation, Versionskonflikte und append-only Auditierung. Registrierungen sind nur im Development-Modus möglich und verlangen E-Mail-Bestätigung. Recovery, optionale TOTP-MFA mit einmaligen Wiederherstellungscodes und persistierte, einzeln widerrufbare Sitzungen sind implementiert. E-Mail-Zustellung erfolgt nur über lokalen SMTP-Capture; produktiver Versand und produktive Schlüsselverwaltung sind nicht freigeschaltet. Authenticator-Schlüssel werden derzeit vom Identity-Store verwaltet; vor Produktivbetrieb ist Verschlüsselung im Ruhezustand mit Schlüsselrotation zu ergänzen. MFA-Pflicht für privilegierte Rollen, Code-Neuausgabe ohne Deaktivierung und Aufbewahrungs-/Bereinigungsjobs sind noch offen. Die folgenden Abschnitte beschreiben teilweise den angestrebten Produktzustand. Details und Testgrenzen: [Identity-/Tenancy-API](identity-tenancy-api.md).
 
 ## Schutzgüter
 
