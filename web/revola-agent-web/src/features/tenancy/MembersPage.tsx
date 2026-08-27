@@ -55,6 +55,8 @@ export function MembersPage({ userId }: { userId: string }) {
   return <section className="workspace-page">
     <Link to="/workspace">Zur Organisationsübersicht</Link>
     <h1>{tenant.data.name}</h1><p>Ihre Rolle: {tenant.data.role}</p>
+    <p><Link to={`/workspace/${tenantId}/company`}>Unternehmensprofil und Wissen</Link></p>
+    <p><Link to={`/workspace/${tenantId}/audits`}>Demo-Konto-Audit</Link></p>
     {!canManage ? <p>Die Mitgliederverwaltung ist für Owner und Admins verfügbar.</p> : <>
       {error ? <Alert severity="error">{error}</Alert> : null}
       <h2>Mitglieder</h2>

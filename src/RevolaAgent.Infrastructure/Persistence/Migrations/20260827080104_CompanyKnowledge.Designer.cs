@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RevolaAgent.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using RevolaAgent.Infrastructure.Persistence;
 namespace RevolaAgent.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(RevolaDbContext))]
-    partial class RevolaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260827080104_CompanyKnowledge")]
+    partial class CompanyKnowledge
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,48 +153,6 @@ namespace RevolaAgent.Infrastructure.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("RevolaAgent.Domain.Audits.AuditRun", b =>
-                {
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ActorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ProfileVersion")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ResultJson")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RuleVersion")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("Scenario")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("SnapshotJson")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("TenantId", "Id");
-
-                    b.HasIndex("TenantId", "CreatedAt");
-
-                    b.ToTable("AuditRuns");
                 });
 
             modelBuilder.Entity("RevolaAgent.Domain.Company.CompanyRecord", b =>
@@ -498,15 +459,6 @@ namespace RevolaAgent.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("RevolaAgent.Domain.Audits.AuditRun", b =>
-                {
-                    b.HasOne("RevolaAgent.Domain.Tenancy.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

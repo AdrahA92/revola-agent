@@ -12,6 +12,12 @@ Docker Compose startet Mailpit unter `http://localhost:8025` (SMTP auf localhost
 
 Unter `/security` lassen sich eine Authenticator-App manuell einrichten und einzelne Sitzungen beenden. MFA-Aktivierung zeigt zehn einmalige Wiederherstellungscodes und beendet alle Sitzungen. Codes sicher aufbewahren; die Anzeige ist absichtlich flüchtig. Passwortänderungen und -zurücksetzungen beenden ebenfalls alle Sitzungen. Produktivregistrierung und produktiver E-Mail-Versand bleiben gesperrt; persistente verschlüsselte Data-Protection-Schlüssel und ein freigegebener Versanddienst sind noch erforderlich.
 
+### Unternehmenswissen und Demo-Audit
+
+Nach dem Anlegen einer Organisation führen die Links „Unternehmensprofil und Wissen“ und „Demo-Konto-Audit“ zu den neuen Modulen. Unternehmensdaten und zusätzliche Fakten benötigen eine Quelle; Änderungen erzeugen neue Versionen. Owner/Admin/Manager dürfen bearbeiten, andere aktive Mitglieder lesen. Für abweichende Quellen eigene Wissenseinträge anlegen. Logos und Datei-Uploads sind noch nicht implementiert.
+
+Ein gespeichertes Profil ermöglicht ein manuelles Demo-Audit mit zwei fiktiven Szenarien. Der deterministische Score, seine Teilwerte, fehlende Daten und Maßnahmen werden zusammen mit der Historie angezeigt. Das ist keine Bewertung eines echten Social-Media-Kontos. Neue Migrationen vor dem Start anwenden. Technische Einzelheiten und Grenzen: [ADR 0011](docs/adr/0011-company-and-demo-audits.md).
+
 ## Voraussetzungen
 
 - .NET SDK 10.0 (siehe `global.json`)

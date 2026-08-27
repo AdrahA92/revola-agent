@@ -5,11 +5,11 @@
 | Phase | Inhalt | Status |
 | --- | --- | --- |
 | 0 | Produkt- und Architekturgrundlage | Abgeschlossen; Phase 1 am 27.08.2026 beauftragt |
-| 1 | Projektgrundgerüst | Implementiert, Verifikation in Bearbeitung |
+| 1 | Projektgrundgerüst | Automatisiert in CI geprüft; visuelle Abnahme zurückgestellt |
 | 2 | Identität und Mandantenfähigkeit | Backend, Verwaltungs-UI und lokale Kontosicherheit implementiert; visuelle Abnahme zurückgestellt, Produktionshärtung offen |
-| 3 | Unternehmensprofil und Wissensbasis | Nicht begonnen |
-| 4 | Demo-Plattform und Konto-Audit | Nicht begonnen |
-| 5 | Agent Runtime | Nicht begonnen |
+| 3 | Unternehmensprofil und Wissensbasis | Textbasierter Kern und UI implementiert; Datei-/Logo-Konzept offen |
+| 4 | Demo-Plattform und Konto-Audit | Demo-Adapter, Scoring und Historie implementiert; Erfolgskontrolle folgt später |
+| 5 | Agent Runtime | Vorbereitung: offizielle API-Dokumentation geprüft; Modell/Budget/Schlüssel offen |
 | 6 | Content und Freigaben | Nicht begonnen |
 | 7 | erste echte Plattformintegration | Blockiert bis Bestätigung |
 | 8 | Analytics und Begleitung | Nicht begonnen |
@@ -50,14 +50,14 @@
 - [x] MUI als Komponentenbasis und Anmelde-/Organisations-/Mitgliederoberfläche implementieren
 - [ ] Neue Oberfläche visuell und mit vollständigem Backend-Ablauf abnehmen
 - [x] E-Mail-Bestätigung, Passwortwiederherstellung und optionale MFA mit lokalem Testversand ergänzen
-- [ ] Sitzungsübersicht und gezielten Einzelwiderruf ergänzen
+- [x] Sitzungsübersicht und gezielten Einzelwiderruf ergänzen
 - [ ] Produktions-Keyring, TLS und Betreiberkonfiguration prüfen
 
 ### P3 – Unternehmenswissen
 
-- [ ] Onboarding und CompanyProfile
-- [ ] Marke, Leistungen, Zielgruppen und Regionen
-- [ ] quellenbasierte Wissenseinträge und Versionierung
+- [x] Onboarding und CompanyProfile
+- [x] Marke, Leistungen, Zielgruppen und Regionen (textbasiert)
+- [x] quellenbasierte Wissenseinträge und Versionierung
 - [ ] Datei-/Logo-Konzept bestätigen
 
 ### P4 – Kernnutzen beweisen
@@ -114,4 +114,4 @@ Der Product Owner hat die aufeinanderfolgende Bearbeitung aller Phasen beauftrag
 
 Verifikation des Backend-Teilschritts am 27.08.2026: Release-Build ohne Warnungen, 29 nicht-containerabhängige .NET-Tests erfolgreich. EF erkennt keine Modelldrift; ein idempotentes PostgreSQL-Migrationsskript wurde erzeugt. Die PostgreSQL-Ausführung ist ohne Docker lokal nicht geprüft, der CI-Erfolg nicht bestätigt. Die React-Dateien wurden in diesem Teilschritt nicht verändert.
 
-> Prüfe die neue Kontosicherheitsmigration in CI. Danach Phasen 3–6 in Reihenfolge bearbeiten. Die visuelle Abnahme bleibt zurückgestellt. Phase 7 benötigt weiterhin eine konkret bestätigte Plattform und Berechtigungen; bezahlte oder externe Aktionen benötigen eigene Freigaben.
+> Kontosicherheit ist auf Stand `b14ad34` vollständig grün in CI: Lauf 33051827013. Unternehmenswissen und Demo-Audits sind lokal mit 42 .NET- und 16 React-Tests geprüft; neue PostgreSQL-Migrationen sind im nächsten CI-Lauf zu prüfen. Für Phase 5 Modell und Kostenlimit abstimmen sowie den OpenAI-Schlüssel sicher konfigurieren; alternativ die Runtime ausdrücklich im reinen Testmodus entwickeln. Für Phase 6 Datei-/Logo-Speicher und Betriebsregion klären. Die visuelle Abnahme bleibt zurückgestellt. Phase 7 benötigt weiterhin eine konkret bestätigte Plattform und Berechtigungen; bezahlte oder externe Aktionen benötigen eigene Freigaben.

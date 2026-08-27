@@ -42,5 +42,12 @@ public class PostgresTests
         await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("DELETE FROM \"AuditEvents\""));
         await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("UPDATE \"AuditEvents\" SET \"Action\" = 'tampered'"));
         Assert.Single((await alice.GetFromJsonAsync<AuditView[]>($"/api/tenants/{tenant}/audit"))!);
+        var profile = new RevolaAgent.Application.Company.SaveRecord<RevolaAgent.Application.Company.CompanyProfileData>(
+            Guid.Empty, Guid.NewGuid(), CompanyTests.Profile, "Owner-provided", null);
+        Assert.Equal(HttpStatusCode.OK, (await SendAsync(alice, HttpMethod.Put, $"/api/tenants/{tenant}/company/profile", profile)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await bob.GetAsync($"/api/tenants/{tenant}/company/profile")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await SendAsync(alice, HttpMethod.Put, $"/api/tenants/{tenant}/demo-audits/{Guid.NewGuid()}", new { scenario = "starter" })).StatusCode);
+        await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("DELETE FROM \"CompanyRevisions\""));
+        await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("UPDATE \"AuditRuns\" SET \"Scenario\" = 'tampered'"));
     }
 }
