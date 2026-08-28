@@ -9,9 +9,9 @@
 | 2 | Identität und Mandantenfähigkeit | Backend, Verwaltungs-UI und lokale Kontosicherheit implementiert; visuelle Abnahme zurückgestellt, Produktionshärtung offen |
 | 3 | Unternehmensprofil und Wissensbasis | Textbasierter Kern und UI implementiert; Datei-/Logo-Konzept offen |
 | 4 | Demo-Plattform und Konto-Audit | Demo-Adapter, Scoring und Historie implementiert; Erfolgskontrolle folgt später |
-| 5 | Agent Runtime | Vorbereitung: offizielle API-Dokumentation geprüft; Modell/Budget/Schlüssel offen |
-| 6 | Content und Freigaben | Nicht begonnen |
-| 7 | erste echte Plattformintegration | Blockiert bis Bestätigung |
+| 5 | Agent Runtime | Begrenzte Demo-Runtime, Kontingente und Historie implementiert; echte OpenAI-Anbindung offen |
+| 6 | Content und Freigaben | Versionierte Textentwürfe, Vier-Augen-Freigaben und interne Terminplanung implementiert; Medien und Publishing offen |
+| 7 | erste echte Plattformintegration | Manueller Browser-Fallback implementiert; OAuth bis Plattform-/Scope-Bestätigung offen |
 | 8 | Analytics und Begleitung | Nicht begonnen |
 | 9 | Leads und CRM | Nicht begonnen |
 | 10 | Outreach | Nicht begonnen |
@@ -62,17 +62,21 @@
 
 ### P4 – Kernnutzen beweisen
 
-- [ ] Fake-Plattformadapter
-- [ ] versionierte Auditregeln
-- [ ] Score, Teilwerte und Empfehlungen
-- [ ] Audit-Historie und Vergleich
+- [x] Demo-Plattformadapter mit zwei festen Szenarien
+- [x] versionierte Auditregeln
+- [x] Score, Teilwerte und Empfehlungen
+- [x] Audit-Historie
+- [ ] Vergleich und echte Erfolgsmessung
 
 ### P5/P6 – KI und Content
 
-- [ ] OpenAI-Anbindung mit Test-Double
-- [ ] AgentRun, Toolkatalog, Policy Gate und Budgets
-- [ ] Briefing, ContentVersion und Medien
-- [ ] Freigaben und Demo-Publishing
+- [x] Demo-Generator und vorbereiteter OpenAI-Request-/Response-Vertrag
+- [ ] Echte OpenAI-Anbindung und Kostenabrechnung
+- [x] AgentRun, begrenzter Toolkatalog, Laufzeit- und Aufrufkontingente
+- [x] Briefing und unveränderliche ContentVersion
+- [ ] Medienerzeugung und Speicherung
+- [x] Versionsgebundene Freigaben und interne Terminplanung
+- [ ] Demo-Publishing-Worker und echte Plattformanbindung
 
 ## Phase-0-Akzeptanzkriterien
 

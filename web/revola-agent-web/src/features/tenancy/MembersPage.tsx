@@ -57,6 +57,8 @@ export function MembersPage({ userId }: { userId: string }) {
     <h1>{tenant.data.name}</h1><p>Ihre Rolle: {tenant.data.role}</p>
     <p><Link to={`/workspace/${tenantId}/company`}>Unternehmensprofil und Wissen</Link></p>
     <p><Link to={`/workspace/${tenantId}/audits`}>Demo-Konto-Audit</Link></p>
+    <p><Link to={`/workspace/${tenantId}/content`}>Agent, Inhalte und Freigaben</Link></p>
+    <p><Link to={`/workspace/${tenantId}/connections`}>Social-Media-Verbindungen</Link></p>
     {!canManage ? <p>Die Mitgliederverwaltung ist für Owner und Admins verfügbar.</p> : <>
       {error ? <Alert severity="error">{error}</Alert> : null}
       <h2>Mitglieder</h2>

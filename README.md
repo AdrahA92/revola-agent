@@ -4,7 +4,15 @@ Mandantenfähige SaaS für die spätere Betreuung von Unternehmenskonten durch e
 
 ## Aktueller Stand
 
-Phase 1 stellt das technische Grundgerüst bereit. Phase 2 ergänzt ASP.NET Core Identity, Cookie-Anmeldung, Organisationen, Mitgliedschaften, Rollen, CSRF-Schutz und Auditierung. Die React-Oberfläche enthält Anmeldung, Entwicklungsregistrierung, Organisationsübersicht, Einladungen, Mitgliederverwaltung und Auditansicht. E-Mail-Bestätigung, Passwortwiederherstellung, optionale TOTP-MFA und Sitzungswiderruf sind implementiert; E-Mails gehen ausschließlich an den lokalen Test-Posteingang. Die visuelle Abnahme ist mit Zustimmung des Nutzers zurückgestellt. Agenten und Social-Media-Verbindungen sind noch nicht implementiert. Der Worker führt noch keine Aufgaben aus. Dies ist noch keine produktionsreife SaaS.
+Grundgerüst, Identity, Mandantenverwaltung, Unternehmenswissen und Demo-Audits sind implementiert. Eine begrenzte Demo-Agent-Runtime erzeugt jetzt Textvorlagen; Content-Versionen, Vier-Augen-Freigaben und interne Terminplanung sind verfügbar. E-Mail-Bestätigung, Passwortwiederherstellung, optionale TOTP-MFA und Sitzungswiderruf sind implementiert; E-Mails gehen ausschließlich an den lokalen Test-Posteingang. Die visuelle Abnahme ist mit Zustimmung des Nutzers zurückgestellt. Echte OpenAI- und Social-Media-Verbindungen fehlen weiterhin. Der Worker veröffentlicht nichts. Dies ist noch keine produktionsreife SaaS.
+
+### Entwürfe, Freigaben und Browser-Fallback
+
+Im Organisationsbereich führen „Content und Freigaben“ und „Social-Media-Konten“ zu den neuen Modulen. Der Demo-Agent verwendet das gespeicherte Unternehmensprofil, keine bezahlte KI. Grenzen: 20 Läufe pro Organisation und UTC-Tag, zwei gleichzeitige Läufe, 15 Sekunden Laufzeit. Bildbeschreibung und Alternativtext sind Textfelder, keine generierten Bilder.
+
+Freigaben gelten für genau eine Version einschließlich Text, Bildbeschreibung, Ziel und Termin. Autoren dürfen eigene Inhalte nicht freigeben. Änderungen machen bisherige Freigaben ungültig; Terminplanung prüft Ablauf und aktuelle Prüfrechte erneut. „Geplant“ bedeutet ausschließlich intern vorgemerkt, nicht bei einer Plattform veröffentlicht.
+
+Der Browser-Fallback öffnet Facebook oder LinkedIn separat; Beitragstexte lassen sich kopieren und manuell einfügen. Eine Anmeldung dort verbindet das Konto **nicht** mit Revola Agent. Es werden weder Browser-Sitzungen noch Plattformpasswörter übernommen. Automatisches Lesen und Veröffentlichen bleiben deaktiviert. Für OAuth fehlen die bestätigte erste Plattform, Berechtigungen, App-Konfiguration und sichere Tokenablage. Details: [ADR 0012](docs/adr/0012-agent-content-and-manual-connections.md).
 
 ### Lokale Kontosicherheit
 

@@ -8,6 +8,10 @@ using RevolaAgent.Application.Company;
 using RevolaAgent.Infrastructure.Company;
 using RevolaAgent.Application.Audits;
 using RevolaAgent.Infrastructure.Audits;
+using RevolaAgent.Application.Agents;
+using RevolaAgent.Infrastructure.Agents;
+using RevolaAgent.Application.Content;
+using RevolaAgent.Infrastructure.Content;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddFoundation("RevolaAgent.Api");
@@ -15,6 +19,9 @@ builder.AddIdentityFoundation();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IAuditService, DemoAuditService>();
 builder.Services.AddSingleton<IDemoPlatform, DemoPlatform>();
+builder.Services.AddScoped<IAgentService, AgentService>();
+builder.Services.AddSingleton<IDraftGenerator, DemoDraftGenerator>();
+builder.Services.AddScoped<IContentService, ContentService>();
 builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 64 * 1024);
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
     context.ProblemDetails.Extensions["traceId"] = Activity.Current?.TraceId.ToString());
@@ -41,6 +48,8 @@ app.MapIdentityFoundation();
 app.MapTenancy();
 app.MapCompany();
 app.MapDemoAudits();
+app.MapAgentContent();
+app.MapConnectionCapabilities();
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false,

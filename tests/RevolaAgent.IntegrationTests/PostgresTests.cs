@@ -49,5 +49,11 @@ public class PostgresTests
         Assert.Equal(HttpStatusCode.OK, (await SendAsync(alice, HttpMethod.Put, $"/api/tenants/{tenant}/demo-audits/{Guid.NewGuid()}", new { scenario = "starter" })).StatusCode);
         await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("DELETE FROM \"CompanyRevisions\""));
         await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("UPDATE \"AuditRuns\" SET \"Scenario\" = 'tampered'"));
+        Assert.Equal(HttpStatusCode.OK, (await SendAsync(alice, HttpMethod.Put, $"/api/tenants/{tenant}/agent-runs/{Guid.NewGuid()}", new { goal = "Vorstellung", platform = "demo-facebook" })).StatusCode);
+        var content = new RevolaAgent.Application.Content.SaveContent(Guid.Empty, Guid.NewGuid(),
+            new("Vorstellung", "Unser Unternehmen", "Büro", "Ein Büro", "demo-facebook", DateTime.UtcNow.AddDays(1), "UTC"));
+        Assert.Equal(HttpStatusCode.OK, (await SendAsync(alice, HttpMethod.Put, $"/api/tenants/{tenant}/content/{Guid.NewGuid()}", content)).StatusCode);
+        await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("DELETE FROM \"ContentVersions\""));
+        await Assert.ThrowsAsync<PostgresException>(() => context.Database.ExecuteSqlRawAsync("DELETE FROM \"ContentDecisions\""));
     }
 }

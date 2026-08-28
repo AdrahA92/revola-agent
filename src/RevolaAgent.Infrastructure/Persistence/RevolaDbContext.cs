@@ -5,6 +5,8 @@ using RevolaAgent.Domain.Tenancy;
 using RevolaAgent.Infrastructure.Identity;
 using RevolaAgent.Domain.Company;
 using RevolaAgent.Domain.Audits;
+using RevolaAgent.Domain.Agents;
+using RevolaAgent.Domain.Content;
 
 namespace RevolaAgent.Infrastructure.Persistence;
 
@@ -19,10 +21,55 @@ public sealed class RevolaDbContext(DbContextOptions<RevolaDbContext> options)
     public DbSet<CompanyRecord> CompanyRecords => Set<CompanyRecord>();
     public DbSet<CompanyRevision> CompanyRevisions => Set<CompanyRevision>();
     public DbSet<AuditRun> AuditRuns => Set<AuditRun>();
+    public DbSet<AgentRun> AgentRuns => Set<AgentRun>();
+    public DbSet<ContentItem> ContentItems => Set<ContentItem>();
+    public DbSet<ContentVersion> ContentVersions => Set<ContentVersion>();
+    public DbSet<ContentDecision> ContentDecisions => Set<ContentDecision>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<AgentRun>(entity =>
+        {
+            entity.HasKey(x => new { x.TenantId, x.Id });
+            entity.Property(x => x.Version).IsConcurrencyToken();
+            entity.Property(x => x.Goal).HasMaxLength(2000);
+            entity.Property(x => x.Platform).HasMaxLength(32);
+            entity.Property(x => x.Model).HasMaxLength(100);
+            entity.Property(x => x.Status).HasMaxLength(32);
+            entity.Property(x => x.ErrorCode).HasMaxLength(64);
+            entity.Property(x => x.Cost).HasPrecision(18, 6);
+            entity.HasIndex(x => new { x.TenantId, x.CreatedAt });
+            entity.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
+        });
+        builder.Entity<ContentItem>(entity =>
+        {
+            entity.HasKey(x => new { x.TenantId, x.Id });
+            entity.Property(x => x.StateVersion).IsConcurrencyToken();
+            entity.Property(x => x.Status).HasMaxLength(32);
+            entity.Property(x => x.ApprovedHash).HasMaxLength(64);
+            entity.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
+        });
+        builder.Entity<ContentVersion>(entity =>
+        {
+            entity.HasKey(x => new { x.TenantId, x.ContentId, x.Version });
+            entity.Property(x => x.Title).HasMaxLength(160);
+            entity.Property(x => x.Text).HasMaxLength(5000);
+            entity.Property(x => x.ImageBrief).HasMaxLength(2000);
+            entity.Property(x => x.AltText).HasMaxLength(500);
+            entity.Property(x => x.Target).HasMaxLength(32);
+            entity.Property(x => x.TimeZone).HasMaxLength(100);
+            entity.Property(x => x.Hash).HasMaxLength(64);
+            entity.HasIndex(x => new { x.TenantId, x.ScheduledAt });
+            entity.HasOne<ContentItem>().WithMany().HasForeignKey(x => new { x.TenantId, x.ContentId }).OnDelete(DeleteBehavior.Restrict);
+        });
+        builder.Entity<ContentDecision>(entity =>
+        {
+            entity.HasKey(x => new { x.TenantId, x.Id });
+            entity.Property(x => x.Decision).HasMaxLength(32);
+            entity.Property(x => x.Hash).HasMaxLength(64);
+            entity.HasOne<ContentVersion>().WithMany().HasForeignKey(x => new { x.TenantId, x.ContentId, x.Version }).OnDelete(DeleteBehavior.Restrict);
+        });
         builder.Entity<AuditRun>(entity =>
         {
             entity.HasKey(x => new { x.TenantId, x.Id });
@@ -80,6 +127,9 @@ public sealed class RevolaDbContext(DbContextOptions<RevolaDbContext> options)
 
     private void ProtectAuditLog()
     {
+        if (ChangeTracker.Entries<ContentVersion>().Any(x => x.State is EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<ContentDecision>().Any(x => x.State is EntityState.Modified or EntityState.Deleted))
+            throw new InvalidOperationException("Content history is append-only.");
         if (ChangeTracker.Entries<AuditRun>().Any(x => x.State is EntityState.Modified or EntityState.Deleted))
             throw new InvalidOperationException("Audit results are append-only.");
         if (ChangeTracker.Entries<CompanyRevision>().Any(x => x.State is EntityState.Modified or EntityState.Deleted))
